@@ -1,7 +1,7 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { Message } from 'ai';
-import { AiService } from './ai/ai.service';
+import { AiService } from './ai.service';
 
 @Controller()
 export class AppController {

@@ -1,48 +1,81 @@
 import { Injectable } from '@nestjs/common';
-import { createOpenRouter } from '@openrouter/ai-sdk-provider';
-import { Message, streamText, generateText, GenerateTextResult } from 'ai';
-import { systemPrompts } from './extra';
+import { generateText, Message } from 'ai';
+import { router, systemPrompts } from './extra';
 import ENV from 'src/constants/env';
 
 @Injectable()
 export class AiService {
-  private readonly openRouter = createOpenRouter({
-    apiKey: ENV.AI_KEY,
-    extraBody: {
-      reasoning: {
-        // Respuestas cortas
-        max_tokens: 50,
-        // Aleatoriedad de las respuesta, +alto mas creativo
-        temperature: 0.8,
-        // Respuestas más predecibles
-        top_p: 0.7,
-        // Penaliza la repetición de tokens, +alto mas reduce la probabilidad de repetir
-        frequency_penalty: 0.8,
-        // Penaliza la repetición de temas o ideas. +alto evita que el modelo se quede "atascado" en un solo tema.
-        presence_penalty: 0.8,
-      },
-    },
-  });
-
-  private conversationHistory: Message[] = [];
+  public conversationHistory: Message[] = [...systemPrompts];
+  private readonly openRouter = router;
   private readonly model = this.openRouter(ENV.AI_MODEL);
+  private readonly maxHistorySize = 10;
 
-  stream(messages: Message[]): any {
-    this.conversationHistory = [...this.conversationHistory, ...messages];
-    return streamText({
-      model: this.model,
-      messages: [...systemPrompts, ...this.conversationHistory],
-    });
+  public async chat(message: string): Promise<string> {
+    const newMessage: Message = {
+      role: 'user',
+      content: message,
+      id: String(this.conversationHistory.length + 1),
+    };
+
+    this.conversationHistory.push(newMessage);
+    this.trimHistory();
+
+    try {
+      const { text } = await generateText({
+        model: this.model,
+        messages: this.conversationHistory,
+      });
+
+      const botMessage: Message = {
+        role: 'assistant',
+        content: text,
+        id: String(this.conversationHistory.length + 1),
+      };
+
+      this.conversationHistory.push(botMessage);
+      this.trimHistory();
+
+      return text;
+    } catch (error) {
+      console.error('Error al generar la respuesta:', error);
+      throw new Error(
+        'Hubo un problema al generar la respuesta. Por favor, inténtalo de nuevo más tarde.',
+      );
+    }
   }
 
-  async generate(messages: Message[]): Promise<GenerateTextResult<any, any>> {
-    this.conversationHistory = [...this.conversationHistory, ...messages];
-    // return generateText({
-    //   model: this.model,
-    //   messages: [...systemPrompts, ...this.conversationHistory],
-    // });
+  private trimHistory() {
+    if (this.conversationHistory.length <= this.maxHistorySize) return;
+    this.conversationHistory = this.conversationHistory.slice(
+      -this.maxHistorySize,
+    );
+  }
+
+  public async test(message: string): Promise<string> {
+    const newMessage: Message = {
+      role: 'user',
+      content: message,
+      id: String(this.conversationHistory.length + 1),
+    };
+
+    this.conversationHistory.push(newMessage);
+    this.trimHistory();
+
+    const simulatedResponse = `Respuesta simulada: El absurdo es esa sensación de que todo tiene sentido hasta que te das cuenta de que no lo tiene. Es como cuando ves que la gente hace cosas que no entiendes, pero no por falta de lógica, sino porque cada quien tiene su propia forma de ver el mundo.`;
+
+    const botMessage: Message = {
+      role: 'assistant',
+      content: simulatedResponse,
+      id: String(this.conversationHistory.length + 1),
+    };
+
+    this.conversationHistory.push(botMessage);
+    this.trimHistory();
+
     return await new Promise((resolve) => {
-      resolve({ messages: [...systemPrompts, ...this.conversationHistory] });
+      setTimeout(() => {
+        resolve(simulatedResponse);
+      }, 100);
     });
   }
 }

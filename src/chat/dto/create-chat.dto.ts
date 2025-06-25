@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsEnum,
 } from 'class-validator';
-import { VoiceModels } from '../../tts/VoiceModels';
+import { VoiceModels } from 'src/tts/VoiceModels';
 
 @ApiSchema({
   name: 'CreateChatDto',

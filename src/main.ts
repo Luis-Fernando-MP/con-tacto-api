@@ -4,25 +4,21 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import ENV from './constants/env';
 import APP from './constants';
-import * as swaggerUi from 'swagger-ui-express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
-
   app.enableCors({
     origin: APP.origins,
     credentials: true,
   });
-
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
     }),
   );
 
-  // Generar documento Swagger
   const config = new DocumentBuilder()
     .setTitle('Con-Tacto API')
     .setDescription('API de Con-Tacto')
@@ -30,14 +26,12 @@ async function bootstrap() {
     .addTag('con-tacto')
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const documentFactory = () =>
+    SwaggerModule.createDocument(app as any, config);
 
-  // ⚠️ Sirve Swagger manualmente para evitar 404 en assets
-  if (process.env.NODE_ENV !== 'production') {
-    app.use('/api', swaggerUi.serve, swaggerUi.setup(document));
-  }
+  SwaggerModule.setup('api', app as any, documentFactory);
 
-  Logger.log(`🚀 server is running on http://localhost:${ENV.PORT}/api`);
+  Logger.log(`🚀 server is running on port http://localhost:${ENV.PORT}/api`);
   await app.listen(ENV.PORT);
 }
 

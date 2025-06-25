@@ -53,9 +53,6 @@ importers:
       rxjs:
         specifier: 7.8.1
         version: 7.8.1
-      swagger-ui-express:
-        specifier: ^5.0.1
-        version: 5.0.1(express@5.0.1)
     devDependencies:
       '@eslint/eslintrc':
         specifier: 3.2.0
@@ -3530,12 +3527,6 @@ packages:
 
   swagger-ui-dist@5.21.0:
     resolution: {integrity: sha512-E0K3AB6HvQd8yQNSMR7eE5bk+323AUxjtCz/4ZNKiahOlPhPJxqn3UPIGs00cyY/dhrTDJ61L7C/a8u6zhGrZg==}
-
-  swagger-ui-express@5.0.1:
-    resolution: {integrity: sha512-SrNU3RiBGTLLmFU8GIJdOdanJTl4TOmT27tt3bWWHppqYmAZ6IDuEuBvMU6nZq0zLEe6b/1rACXCgLZqO6ZfrA==}
-    engines: {node: '>= v0.10.32'}
-    peerDependencies:
-      express: '>=4.0.0 || >=5.0.0-beta'
 
   swr@2.3.3:
     resolution: {integrity: sha512-dshNvs3ExOqtZ6kJBaAsabhPdHyeY4P2cKwRCniDVifBMoG/SVI7tfLWqPXriVspf2Rg4tPzXJTnwaihIeFw2A==}
@@ -7661,11 +7652,6 @@ snapshots:
   swagger-ui-dist@5.21.0:
     dependencies:
       '@scarf/scarf': 1.4.0
-
-  swagger-ui-express@5.0.1(express@5.0.1):
-    dependencies:
-      express: 5.0.1
-      swagger-ui-dist: 5.21.0
 
   swr@2.3.3(react@19.1.0):
     dependencies:

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { generateText, Message } from 'ai';
 import { router, systemPrompts } from './extra';
-import ENV from 'src/constants/env';
+import ENV from '../constants/env';
 
 @Injectable()
 export class AiService {

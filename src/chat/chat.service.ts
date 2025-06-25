@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { AiService } from 'src/ai/ai.service';
-import { VoiceModels } from 'src/tts/VoiceModels';
-import TTSService from 'src/tts/tts.service';
+import { AiService } from '../ai/ai.service';
+import { VoiceModels } from '../tts/VoiceModels';
+import TTSService from '../tts/tts.service';
 
 @Injectable()
 export class ChatService {

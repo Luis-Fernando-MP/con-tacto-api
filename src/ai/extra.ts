@@ -1,6 +1,6 @@
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { Message } from 'ai';
-import ENV from 'src/constants/env';
+import ENV from '../constants/env';
 
 export const systemPrompts: Message[] = [
   {

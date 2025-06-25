@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatController } from './chat.controller';
-import { AiService } from 'src/ai/ai.service';
-import TTSService from 'src/tts/tts.service';
+import { AiService } from '../ai/ai.service';
+import TTSService from '../tts/tts.service';
 
 @Module({
   controllers: [ChatController],

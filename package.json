@@ -20,6 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@andresaya/edge-tts": "^1.2.4",
+    "@google-cloud/text-to-speech": "^6.1.0",
     "@nestjs/common": "11.0.1",
     "@nestjs/core": "11.0.1",
     "@nestjs/platform-express": "11.0.1",
@@ -29,6 +31,8 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "dotenv": "^16.5.0",
+    "install": "^0.13.0",
+    "npm": "^11.4.2",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.1"
   },

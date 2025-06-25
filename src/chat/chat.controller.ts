@@ -1,7 +1,6 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import { Controller, Post, Body, StreamableFile } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { Response } from 'express';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('chat')
@@ -22,15 +21,13 @@ export class ChatController {
   })
   @ApiBody({ type: CreateChatDto })
   @Post()
-  async create(@Body() createChatDto: CreateChatDto, @Res() res: Response) {
+  async create(@Body() createChatDto: CreateChatDto) {
     const base64Audio = await this.chatService.create(createChatDto);
-    //El controlador recibe el audio en base64 del servicio y lo convierte a un buffer
     const audioBuffer = Buffer.from(base64Audio, 'base64');
 
-    // Configura los headers de la respuesta para indicar que el contenido es un archivo MP3 y establece el nombre del archivo.
-    res.setHeader('Content-Type', 'audio/mpeg');
-    res.setHeader('Content-Disposition', 'attachment; filename=output.mp3');
-    // Envío del buffer del audio: Envía el buffer del audio como respuesta.
-    res.send(audioBuffer);
+    return new StreamableFile(audioBuffer, {
+      type: 'audio/mpeg',
+      disposition: 'attachment; filename=output.mp3',
+    });
   }
 }

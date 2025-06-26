@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chat Básico</title>
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      #chat {
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 200px;
+        overflow-y: auto;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Chat Básico</h2>
+    <div id="chat"></div>
+    <input type="text" id="msg" placeholder="Escribe un mensaje..." />
+    <button onclick="enviar()">Enviar</button>
+
+    <script>
+      const socket = io('http://localhost:3000', {
+        transports: ['websocket'],
+      });
+
+      const chat = document.getElementById('chat');
+      const input = document.getElementById('msg');
+
+      socket.on('connect', () => {
+        console.log('Conectado al servidor');
+      });
+
+      socket.on('chat', (data) => {
+        const msg = document.createElement('div');
+        msg.textContent = data;
+        chat.appendChild(msg);
+        chat.scrollTop = chat.scrollHeight;
+      });
+
+      function enviar() {
+        const mensaje = input.value.trim();
+        if (mensaje) {
+          socket.emit('chat', mensaje);
+          input.value = '';
+        }
+      }
+    </script>
+  </body>
+</html>

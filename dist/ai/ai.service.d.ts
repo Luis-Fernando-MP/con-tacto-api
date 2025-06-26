@@ -5,6 +5,9 @@ export declare class AiService {
     private readonly model;
     private readonly maxHistorySize;
     chat(message: string): Promise<string>;
+    story(topic: string): Promise<string>;
+    private getLastTwoConversations;
+    private generateResponse;
     private trimHistory;
-    test(message: string): Promise<string>;
+    test(): Promise<string>;
 }

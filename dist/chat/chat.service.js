@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatService = void 0;
 const common_1 = require("@nestjs/common");
 const ai_service_1 = require("../ai/ai.service");
-const VoiceModels_1 = require("../tts/VoiceModels");
 const tts_service_1 = require("../tts/tts.service");
 let ChatService = class ChatService {
     aiService;
@@ -22,12 +21,12 @@ let ChatService = class ChatService {
         this.tts = tts;
     }
     async create({ prompt, test, model }) {
-        let response = await this.aiService.test(prompt);
+        let response = await this.aiService.test();
         if (!test)
             response = await this.aiService.chat(prompt);
         return await this.tts.speak({
             text: response,
-            model: model ?? VoiceModels_1.VoiceModels.AlexNeural,
+            model: model,
         });
     }
 };

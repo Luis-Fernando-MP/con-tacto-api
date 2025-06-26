@@ -8,12 +8,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const edge_tts_1 = require("@andresaya/edge-tts");
 const common_1 = require("@nestjs/common");
+const VoiceModels_1 = require("./VoiceModels");
 let TTSService = class TTSService {
     async voices() {
         const tts = new edge_tts_1.EdgeTTS();
         return await tts.getVoices();
     }
-    async speak({ text, model }) {
+    async speak({ text, model = VoiceModels_1.VoiceModels.AlexNeural }) {
         const tts = new edge_tts_1.EdgeTTS();
         await tts.synthesize(text, model, {
             rate: '0%',

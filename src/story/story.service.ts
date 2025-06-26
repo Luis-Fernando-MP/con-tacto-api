@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { CreateChatDto } from './dto/create-chat.dto';
+import { CreateStoryDto } from './dto/create-story.dto';
 import { AiService } from 'src/ai/ai.service';
 import TTSService from 'src/tts/tts.service';
 
 @Injectable()
-export class ChatService {
+export class StoryService {
   constructor(
     private readonly aiService: AiService,
     private readonly tts: TTSService,
   ) {}
 
-  async create({ prompt, test, model }: CreateChatDto) {
+  async create({ topic, model, test }: CreateStoryDto) {
     let response = await this.aiService.test();
-    if (!test) response = await this.aiService.chat(prompt);
+    if (!test) response = await this.aiService.story(topic);
 
     return await this.tts.speak({
       text: response,

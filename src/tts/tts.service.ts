@@ -1,9 +1,10 @@
 import { EdgeTTS } from '@andresaya/edge-tts';
 import { Injectable } from '@nestjs/common';
+import { VoiceModels } from './VoiceModels';
 
 interface Speak {
   text: string;
-  model: string;
+  model?: string;
 }
 
 @Injectable()
@@ -13,7 +14,7 @@ export default class TTSService {
     return await tts.getVoices();
   }
 
-  public async speak({ text, model }: Speak) {
+  public async speak({ text, model = VoiceModels.AlexNeural }: Speak) {
     const tts = new EdgeTTS();
     await tts.synthesize(text, model, {
       rate: '0%', // Speech rate (range: -100% to 100%)

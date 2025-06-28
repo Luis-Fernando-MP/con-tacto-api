@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { SocketGateway } from './socket.gateway';
+import { ChatModule } from 'src/chat/chat.module';
+import TTSService from 'src/tts/tts.service';
 
 @Module({
-  providers: [SocketGateway],
+  providers: [SocketGateway, TTSService],
+  imports: [ChatModule],
 })
 export class SocketModule {}

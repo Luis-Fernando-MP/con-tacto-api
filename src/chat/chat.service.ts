@@ -19,4 +19,17 @@ export class ChatService {
       model: model,
     });
   }
+
+  async to_create({ prompt, test, model }: CreateChatDto) {
+    let response = await this.aiService.test();
+    if (!test) response = await this.aiService.chat(prompt);
+
+    return {
+      text: response,
+      audio: await this.tts.speak({
+        text: response,
+        model: model,
+      }),
+    };
+  }
 }

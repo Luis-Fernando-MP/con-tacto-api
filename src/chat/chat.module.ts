@@ -7,5 +7,6 @@ import TTSService from 'src/tts/tts.service';
 @Module({
   controllers: [ChatController],
   providers: [ChatService, AiService, TTSService],
+  exports: [ChatService],
 })
 export class ChatModule {}

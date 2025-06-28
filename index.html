@@ -2,53 +2,167 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Chat Básico</title>
+    <title>Chat IA - Tutor/Usuario</title>
     <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
-    <style>
-      body {
-        font-family: sans-serif;
-        padding: 20px;
-      }
-      #chat {
-        border: 1px solid #ccc;
-        padding: 10px;
-        height: 200px;
-        overflow-y: auto;
-        margin-bottom: 10px;
-      }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <h2>Chat Básico</h2>
-    <div id="chat"></div>
-    <input type="text" id="msg" placeholder="Escribe un mensaje..." />
-    <button onclick="enviar()">Enviar</button>
+  <body class="bg-gray-100 min-h-screen p-6">
+    <div id="setup" class="max-w-md mx-auto bg-white p-6 rounded shadow">
+      <h2 class="text-xl font-semibold mb-4 text-center">Selecciona tu rol</h2>
+      <select id="rol" class="w-full p-2 border rounded mb-4">
+        <option value="usuario">Usuario</option>
+        <option value="tutor">Tutor</option>
+      </select>
+      <button
+        onclick="setRol()"
+        class="w-full bg-blue-500 text-white py-2 rounded"
+      >
+        Entrar
+      </button>
+    </div>
+
+    <div
+      id="usuario-panel"
+      class="hidden max-w-xl mx-auto bg-white p-6 rounded shadow"
+    >
+      <h3 class="text-lg font-semibold mb-4">Chat con IA</h3>
+      <input
+        id="user-msg"
+        type="text"
+        placeholder="Escribe tu mensaje..."
+        class="w-full p-2 border rounded mb-2"
+      />
+      <button
+        onclick="enviarUsuario()"
+        class="w-full bg-green-500 text-white py-2 rounded mb-4"
+      >
+        Enviar
+      </button>
+      <div id="user-log" class="space-y-3"></div>
+    </div>
+
+    <div
+      id="tutor-panel"
+      class="hidden max-w-5xl mx-auto grid grid-cols-3 gap-4"
+    >
+      <div class="bg-white p-4 rounded shadow col-span-1">
+        <h3 class="text-lg font-semibold mb-4">Usuarios Conectados</h3>
+        <ul id="user-list" class="space-y-2"></ul>
+      </div>
+
+      <div class="bg-white p-4 rounded shadow col-span-2">
+        <h3 class="text-lg font-semibold mb-4">
+          Sala del Usuario: <span id="current-user">(ninguno)</span>
+        </h3>
+        <div
+          id="tutor-log"
+          class="space-y-3 mb-4 h-64 overflow-y-auto border p-2 rounded"
+        ></div>
+        <input
+          id="tutor-msg"
+          type="text"
+          placeholder="Escribe un mensaje..."
+          class="w-full p-2 border rounded mb-2"
+        />
+        <button
+          onclick="enviarTutor()"
+          class="w-full bg-purple-500 text-white py-2 rounded"
+        >
+          Enviar a este usuario
+        </button>
+      </div>
+    </div>
 
     <script>
-      const socket = io('http://localhost:3000', {
-        transports: ['websocket'],
-      });
-
-      const chat = document.getElementById('chat');
-      const input = document.getElementById('msg');
+      const socket = io('http://localhost:3000');
+      let currentRole = null;
+      let activeUserRoom = null;
 
       socket.on('connect', () => {
         console.log('Conectado al servidor');
       });
 
-      socket.on('chat', (data) => {
-        const msg = document.createElement('div');
-        msg.textContent = data;
-        chat.appendChild(msg);
-        chat.scrollTop = chat.scrollHeight;
+      function setRol() {
+        currentRole = document.getElementById('rol').value;
+        socket.emit('setRole', currentRole);
+      }
+
+      socket.on('roleConfirmed', (msg) => {
+        document.getElementById('setup').classList.add('hidden');
+
+        if (currentRole === 'usuario') {
+          document.getElementById('usuario-panel').classList.remove('hidden');
+        } else {
+          document.getElementById('tutor-panel').classList.remove('hidden');
+        }
       });
 
-      function enviar() {
-        const mensaje = input.value.trim();
-        if (mensaje) {
-          socket.emit('chat', mensaje);
-          input.value = '';
+      // Usuario
+      function enviarUsuario() {
+        const msg = document.getElementById('user-msg').value;
+        if (msg.trim()) {
+          socket.emit('chat', msg);
+          document.getElementById('user-msg').value = '';
         }
+      }
+
+      socket.on('audio', ({ respuesta, audioUrl }) => {
+        agregarMensaje(
+          document.getElementById('user-log'),
+          `🧠 IA: ${respuesta}`,
+          audioUrl,
+        );
+      });
+
+      socket.on('notificacion', ({ mensaje, audioUrl }) => {
+        agregarMensaje(
+          document.getElementById('user-log'),
+          `📢 Tutor: ${mensaje}`,
+          audioUrl,
+        );
+      });
+
+      // Tutor
+      socket.on('usuariosConectados', (usuarios) => {
+        const lista = document.getElementById('user-list');
+        lista.innerHTML = '';
+        usuarios.forEach((id) => {
+          const li = document.createElement('li');
+          li.className = 'cursor-pointer hover:text-blue-600';
+          li.textContent = id;
+          li.onclick = () => seleccionarUsuario(id);
+          lista.appendChild(li);
+        });
+      });
+
+      function seleccionarUsuario(id) {
+        activeUserRoom = id;
+        document.getElementById('current-user').textContent = id;
+        document.getElementById('tutor-log').innerHTML = '';
+      }
+
+      function enviarTutor() {
+        const msg = document.getElementById('tutor-msg').value;
+        if (!activeUserRoom) return alert('Selecciona un usuario primero');
+        socket.emit('tutorMensaje', { to: activeUserRoom, mensaje: msg });
+        agregarMensaje(document.getElementById('tutor-log'), `👨‍🏫 Tú: ${msg}`);
+        document.getElementById('tutor-msg').value = '';
+      }
+
+      function agregarMensaje(container, texto, base64 = null) {
+        const p = document.createElement('p');
+        p.textContent = texto;
+        container.appendChild(p);
+
+        if (base64) {
+          const audio = document.createElement('audio');
+          audio.controls = true;
+          audio.src = `data:audio/mpeg;base64,${base64}`;
+          audio.autoplay = true;
+          container.appendChild(audio);
+        }
+
+        container.scrollTop = container.scrollHeight;
       }
     </script>
   </body>

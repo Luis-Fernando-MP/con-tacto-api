@@ -1,4 +1,4 @@
-import { Controller, Post, Body, StreamableFile } from '@nestjs/common';
+import { Controller, Post, Body, Res } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -6,6 +6,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import * as ffmpeg from 'fluent-ffmpeg';
 import * as ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import { Readable } from 'stream';
+import { Response } from 'express';
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
@@ -28,15 +29,23 @@ export class ChatController {
   @ApiBody({ type: CreateChatDto })
   @Post()
   @Post()
-  async create(@Body() createChatDto: CreateChatDto) {
+  async create(@Body() createChatDto: CreateChatDto, @Res() res: Response) {
     const base64Audio = await this.chatService.create(createChatDto);
     const inputBuffer = Buffer.from(base64Audio, 'base64');
 
     const wavBuffer = await this.convertToWav(inputBuffer);
-    return new StreamableFile(wavBuffer, {
-      type: 'audio/wav',
-      disposition: 'attachment; filename=output.wav',
+
+    res.set({
+      'Content-Type': 'audio/wav',
+      'Content-Length': wavBuffer.length,
     });
+
+    res.send(wavBuffer);
+    // Prev config
+    // return new StreamableFile(wavBuffer, {
+    //   type: 'audio/wav',
+    //   disposition: 'attachment; filename=output.wav',
+    // });
   }
 
   private convertToWav(inputBuffer: Buffer): Promise<Buffer> {

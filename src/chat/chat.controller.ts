@@ -2,6 +2,7 @@ import { Controller, Post, Body, StreamableFile } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import * as streamBuffers from 'stream-buffers';
 
 import * as ffmpeg from 'fluent-ffmpeg';
 import * as ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
@@ -42,8 +43,8 @@ export class ChatController {
 
   private convertToWav(inputBuffer: Buffer): Promise<Buffer> {
     return new Promise((resolve, reject) => {
-      const chunks: Buffer[] = [];
       const inputStream = Readable.from(inputBuffer);
+      const outputBuffer = new streamBuffers.WritableStreamBuffer();
 
       ffmpeg(inputStream)
         .inputFormat('mp3')
@@ -52,11 +53,9 @@ export class ChatController {
         .format('wav')
         .on('error', reject)
         .on('end', () => {
-          const result = Buffer.concat(chunks);
-          resolve(result);
+          resolve(outputBuffer.getContents());
         })
-        .pipe()
-        .on('data', (chunk: Buffer) => chunks.push(chunk));
+        .writeToStream(outputBuffer);
     });
   }
 

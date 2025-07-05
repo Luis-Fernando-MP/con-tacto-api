@@ -51,9 +51,24 @@ export class ChatController {
         .audioCodec('pcm_u8')
         .audioFrequency(8000)
         .format('wav')
+        .outputOptions([
+          '-ac',
+          '1', // Mono
+          '-ar',
+          '8000', // 8000 Hz
+          '-f',
+          'wav', // WAV contenedor fijo
+          '-fflags',
+          '+bitexact',
+          '-flags:v',
+          '+bitexact',
+          '-write_bext',
+          '0', // Quita metadata BEXT (broadcast extension)
+        ])
         .on('error', reject)
         .on('end', () => {
-          resolve(outputBuffer.getContents());
+          const buffer = outputBuffer.getContents();
+          resolve(buffer);
         })
         .writeToStream(outputBuffer);
     });

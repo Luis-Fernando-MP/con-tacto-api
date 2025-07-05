@@ -3,6 +3,12 @@ import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+import * as ffmpeg from 'fluent-ffmpeg';
+import * as ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
+import { Readable } from 'stream';
+
+ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+
 @ApiTags('chat')
 @Controller('chat')
 export class ChatController {
@@ -24,11 +30,32 @@ export class ChatController {
   @Post()
   async create(@Body() createChatDto: CreateChatDto) {
     const base64Audio = await this.chatService.create(createChatDto);
-    const audioBuffer = Buffer.from(base64Audio, 'base64');
+    const inputBuffer = Buffer.from(base64Audio, 'base64');
 
-    return new StreamableFile(audioBuffer, {
-      type: 'audio/mpeg',
-      disposition: 'attachment; filename=output.mp3',
+    const wavBuffer = await this.convertToWav(inputBuffer);
+    return new StreamableFile(wavBuffer, {
+      type: 'audio/wav',
+      disposition: 'attachment; filename=output.wav',
+    });
+  }
+
+  private convertToWav(inputBuffer: Buffer): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const chunks: Buffer[] = [];
+      const inputStream = Readable.from(inputBuffer);
+
+      ffmpeg(inputStream)
+        .inputFormat('mp3')
+        .audioCodec('pcm_u8')
+        .audioFrequency(8000)
+        .format('wav')
+        .on('error', reject)
+        .on('end', () => {
+          const result = Buffer.concat(chunks);
+          resolve(result);
+        })
+        .pipe()
+        .on('data', (chunk: Buffer) => chunks.push(chunk));
     });
   }
 

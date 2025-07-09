@@ -10,13 +10,15 @@ export class ChatService {
     private readonly tts: TTSService,
   ) {}
 
-  async create({ prompt, test, model }: CreateChatDto) {
+  async create({ prompt, test, model, ...ttsOptions }: CreateChatDto) {
     let response = await this.aiService.test();
     if (!test) response = await this.aiService.chat(prompt);
+    console.log('tts --> 0', { ttsOptions });
 
     return await this.tts.speak({
       text: response,
       model: model,
+      ...ttsOptions,
     });
   }
 

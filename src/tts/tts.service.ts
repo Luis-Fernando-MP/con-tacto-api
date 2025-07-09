@@ -5,6 +5,9 @@ import { VoiceModels } from './VoiceModels';
 interface Speak {
   text: string;
   model?: string;
+  volume?: string;
+  pitch?: string;
+  rate?: string;
 }
 
 @Injectable()
@@ -14,12 +17,19 @@ export default class TTSService {
     return await tts.getVoices();
   }
 
-  public async speak({ text, model = VoiceModels.AlexNeural }: Speak) {
+  public async speak({
+    text,
+    model = VoiceModels.AlexNeural,
+    volume = '10%',
+    pitch = '0Hz',
+    rate = '0%',
+  }: Speak) {
     const tts = new EdgeTTS();
+    console.log({ model, volume, pitch, rate });
     await tts.synthesize(text, model, {
-      rate: '0%', // Más rápido (puedes probar hasta 100%)
-      volume: '10%', // Volumen neutro
-      pitch: '0Hz', // Más agudo (puedes ajustar hasta 100Hz si quieres algo muy agudo)
+      rate, // Más rápido (puedes probar hasta 100%)
+      volume, // Volumen neutro
+      pitch, // Más agudo (puedes ajustar hasta 100Hz si quieres algo muy agudo)
     });
 
     return tts.toBase64();

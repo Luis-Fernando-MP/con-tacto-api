@@ -17,9 +17,9 @@ export default class TTSService {
   public async speak({ text, model = VoiceModels.AlexNeural }: Speak) {
     const tts = new EdgeTTS();
     await tts.synthesize(text, model, {
-      rate: '70%', // Más rápido (puedes probar hasta 100%)
-      volume: '30%', // Volumen neutro
-      pitch: '70Hz', // Más agudo (puedes ajustar hasta 100Hz si quieres algo muy agudo)
+      rate: '0%', // Más rápido (puedes probar hasta 100%)
+      volume: '10%', // Volumen neutro
+      pitch: '0Hz', // Más agudo (puedes ajustar hasta 100Hz si quieres algo muy agudo)
     });
 
     return tts.toBase64();

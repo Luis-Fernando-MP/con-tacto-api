@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateStoryDto } from './dto/create-story.dto';
-import { AiService } from 'src/ai/ai.service';
-import TTSService from 'src/tts/tts.service';
+import { AiService } from 'src/services/ai/ai.service';
+import TTSService from 'src/services/tts/tts.service';
 
 @Injectable()
 export class StoryService {

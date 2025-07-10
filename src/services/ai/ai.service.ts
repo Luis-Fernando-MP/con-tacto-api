@@ -10,7 +10,7 @@ export class AiService {
   public conversationHistory: Omit<Message, 'id'>[] = [];
   private readonly openRouter = router;
   private readonly model = this.openRouter(ENV.AI_MODEL);
-  private readonly maxHistorySize = 8; // 4 rondas (usuario + asistente)
+  private readonly maxHistorySize = 8;
 
   constructor() {
     this.conversationHistory = [...baseChatPrompt];

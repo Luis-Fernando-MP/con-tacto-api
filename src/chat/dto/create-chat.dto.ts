@@ -21,6 +21,15 @@ export class CreateChatDto {
 
   @ApiProperty({
     required: false,
+    default: 'false',
+    description: 'Especifica si quieres usar gemini en lugar de openRouter',
+  })
+  @IsOptional()
+  @IsBoolean()
+  useGemini?: boolean;
+
+  @ApiProperty({
+    required: false,
     default: false,
     description:
       'Si estas en desarrollo usa true para mayor rapidez y no incurrir en más gastos',

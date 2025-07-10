@@ -56,11 +56,17 @@ export class ChatService {
     }
   }
 
-  async generateAudio({ prompt, test, model, ...ttsOptions }: CreateChatDto) {
+  async generateAudio({
+    prompt,
+    test,
+    model,
+    useGemini = false,
+    ...ttsOptions
+  }: CreateChatDto) {
     try {
       console.log(`prompt: ${prompt}`);
       let response = await this.aiService.test();
-      if (!test) response = await this.aiService.chat(prompt);
+      if (!test) response = await this.aiService.chat(prompt, useGemini);
 
       console.time('ai-generation');
       console.log(`response: ${response}`);

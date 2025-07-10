@@ -9,7 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from 'src/chat/chat.service';
-import TTSService from 'src/tts/tts.service';
+import TTSService from 'src/services/tts/tts.service';
 import APP from 'src/constants';
 
 @WebSocketGateway({ cors: APP.origins })

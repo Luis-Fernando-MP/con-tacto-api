@@ -7,7 +7,7 @@ import {
   IsEnum,
   MaxLength,
 } from 'class-validator';
-import { VoiceModels } from 'src/tts/VoiceModels';
+import { VoiceModels } from 'src/services/tts/VoiceModels';
 
 @ApiSchema({
   name: 'CreateStoryDto',

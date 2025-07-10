@@ -67,7 +67,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const role = this.roles.get(client.id);
     if (role !== 'usuario') return;
 
-    const response = await this.chatService.to_create({
+    const response = await this.chatService.generateAudio({
       prompt,
       test: true,
     });

@@ -9,8 +9,8 @@ import {
 import { VoiceModels } from 'src/services/tts/VoiceModels';
 
 @ApiSchema({
-  name: 'CreateChatDto',
-  description: 'Crea un nuevo chat con un prompt y una voz de texto',
+  name: 'CreateTtsDto',
+  description: 'Crea salida en wav con un texto',
 })
 export class CreateTtsDto {
   @ApiProperty()

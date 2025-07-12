@@ -150,12 +150,12 @@ def conexionApi(prompt, endpoint):
 dac = DAC(Pin(25))
 
 puntos = [
-    Pin(15, Pin.IN, Pin.PULL_DOWN),  # Punto 1
-    Pin(2, Pin.IN, Pin.PULL_DOWN),  # Punto 2
-    Pin(4, Pin.IN, Pin.PULL_DOWN),  # Punto 3
-    Pin(16, Pin.IN, Pin.PULL_DOWN),  # Punto 4
-    Pin(17, Pin.IN, Pin.PULL_DOWN),  # Punto 5
-    Pin(21, Pin.IN, Pin.PULL_DOWN)   # Punto 6
+  Pin(15, Pin.IN, Pin.PULL_DOWN),  # Punto 1
+  Pin(2, Pin.IN, Pin.PULL_DOWN),  # Punto 2
+  Pin(4, Pin.IN, Pin.PULL_DOWN),  # Punto 3
+  Pin(16, Pin.IN, Pin.PULL_DOWN),  # Punto 4
+  Pin(17, Pin.IN, Pin.PULL_DOWN),  # Punto 5
+  Pin(21, Pin.IN, Pin.PULL_DOWN)   # Punto 6
 ]
 
 enviar = Pin(22, Pin.IN, Pin.PULL_DOWN)
@@ -218,17 +218,17 @@ while True:
         palabra = palabra + letra
         time.sleep(0.3)
         print("palabra formada: " + palabra)
-    if enviar.value()==1 and palabra != "":
-        print("enviar " + palabra+" al chat")
+    if enviar.value() == 1 and palabra != "":
+        print("enviar " + palabra + " al chat")
         endpoint = "chat"
         data = {
-        "prompt": palabra,
-        "useGemini": True,
-        "test": False,
-        "model": "es-PE-AlexNeural",
-        "volume": "5%",
-        "pitch": "30Hz",
-        "rate": "30%"
+          "prompt": palabra,
+          "useGemini": True,
+          "test": False,
+          "model": "es-PE-AlexNeural",
+          "volume": "5%",
+          "pitch": "30Hz",
+          "rate": "30%"
         }
         conexionApi(data, endpoint)  
         time.sleep(0.3)

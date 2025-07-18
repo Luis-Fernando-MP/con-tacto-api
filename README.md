@@ -1,6 +1,6 @@
-<p align="center" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center">
-  <img src="./background.png" alt="Swagger API Demo"  style="border-radius: 12px; max-height: 300px; width: auto">
-  <img src="./esp32.jpg" alt="Swagger API Demo" width="80%" style="border-radius: 12px; max-height: 300px; width: auto">
+<p align="center" style="column-count: 2; margin: 20px 0;">
+  <img src="./background.png" alt="Swagger API Demo" style="border-radius: 12px; height: 400px; width: auto">
+  <img src="./esp32.jpg" alt="Swagger API Demo" style="border-radius: 12px; height: 400px; width: auto">
 </p>
 
 <p align="center">
